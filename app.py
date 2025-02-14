@@ -179,7 +179,7 @@ if song_selection != "Select a Song":
 # Footer UI
 st.markdown("""
     <div class="footer">
-        🎵 Made with ❤️ by <a href="https://github.com/yourgithub" target="_blank">Your Name</a> | 
+        🎵 Made with ❤️ by <a href="https://github.com/harshar2002" target="_blank">Harsha</a> | 
         Follow us on <a href="https://twitter.com/yourprofile" target="_blank">Twitter</a> |
         Contact: <a href="mailto:your-email@example.com">your-email@example.com</a>
     </div>
