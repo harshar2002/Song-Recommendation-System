@@ -192,3 +192,12 @@ if selected_song != "Select a Song":
                     with cols2[i - 5]:
                         st.image(album_art_url, width=150)
                         st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
+
+# Footer UI
+st.markdown("""
+    <div class="footer">
+        🎵 Made with ❤️ by <a href="https://github.com/harshar2002" target="_blank">Harsha</a> | 
+        Follow us on <a href="https://twitter.com/yourprofile" target="_blank">Twitter</a> |
+        Contact: <a href="mailto:harshagowda497@gmail.com">harshagowda497@gmail.com</a>
+    </div>
+""", unsafe_allow_html=True)
