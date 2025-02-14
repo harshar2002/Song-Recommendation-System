@@ -181,6 +181,6 @@ st.markdown("""
     <div class="footer">
         🎵 Made with ❤️ by <a href="https://github.com/harshar2002" target="_blank">Harsha</a> | 
         Follow us on <a href="https://twitter.com/yourprofile" target="_blank">Twitter</a> |
-        Contact: <a href="mailto:your-email@example.com">your-email@example.com</a>
+        Contact: <a href="mailto:harshagowda497@gmail.com">GMAIL</a>
     </div>
 """, unsafe_allow_html=True)
