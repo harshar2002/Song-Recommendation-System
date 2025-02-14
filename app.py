@@ -28,7 +28,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS (Beautiful Dropdown & Speed Optimization)
+# Custom CSS (Better Spacing & Layout)
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -47,6 +47,7 @@ st.markdown("""
         border-radius: 8px;
         font-size: 16px;
         padding: 5px;
+        border: 1px solid #1DB954;
     }
 
     /* Recommended Songs */
@@ -58,38 +59,15 @@ st.markdown("""
         text-align: center; 
     }
 
-    /* Two Row Layout */
+    /* Song Row Layout */
     .song-row {
         display: flex;
         justify-content: center;
-        gap: 20px;
-        margin-bottom: 40px;
+        gap: 30px; /* Gap between songs */
+        margin-bottom: 50px; /* Space between first and second row */
     }
 
-    /* Dropdown Label */
-    .dropdown-label {
-        font-size: 18px;
-        color: #1DB954;
-        font-weight: bold;
-    }
-
-    /* Centered Image */
-    .song-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center; 
-        justify-content: center;
-    }
-
-    /* Image Styling */
-    .song-image {
-        width: 150px;
-        height: 150px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
-
-    /* Text Box */
+    /* Fixed Text Box Size & Prevent Overflow */
     .song-card {
         background-color: #222;
         padding: 15px;
@@ -112,11 +90,11 @@ st.markdown("""
         box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.2);
     }
 
-    /* Text Wrapping */
+    /* Ensure Text Wraps Inside Box */
     .song-card h3, .song-card h4, .song-card p {
         text-align: center;
         margin: 5px 0;
-        white-space: normal;
+        white-space: normal; 
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
@@ -136,7 +114,7 @@ def compute_cosine_similarity(index, df_scaled):
         return np.zeros(len(df_scaled))
     return cosine_similarity(df_scaled[index].reshape(1, -1), df_scaled).flatten()
 
-# Recommendation Function
+# Recommendation Function (Returns 10 Recommendations)
 def content_based_recommend(song_name, top_n=10):
     if song_name not in df_cleaned['track_name'].values:
         return None
@@ -147,7 +125,7 @@ def content_based_recommend(song_name, top_n=10):
 
     return df_cleaned.iloc[similar_song_indices][['track_name', 'artists', 'album_name', 'track_genre']]
 
-# Function to fetch album artwork
+# Function to fetch album artwork from Last.fm API
 @st.cache_data
 def get_album_art(song_name, artist_name):
     url = f"http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={LASTFM_API_KEY}&artist={artist_name}&track={song_name}&format=json"
@@ -172,27 +150,45 @@ st.markdown('<div class="title-container"><h1>🎵 Music Recommender System</h1>
 # Dropdown
 st.markdown('<div class="dropdown-label">🎶 Select a Song:</div>', unsafe_allow_html=True)
 song_options = ["Select a Song"] + df_cleaned["song_display"].unique().tolist()
-song_selection = st.selectbox("", song_options, index=song_options.index("Select a Song"))
+selected_song = st.selectbox(
+    "", 
+    options=song_options, 
+    index=0,  
+    format_func=lambda x: "🔍 " + x if x != "Select a Song" else "🎶 Select a Song",
+    key="song_selection"
+)
 
 # Show recommendations
-if song_selection != "Select a Song":
-    selected_song = df_cleaned[df_cleaned["song_display"] == song_selection]["track_name"].values[0]
-    selected_artist = df_cleaned[df_cleaned["song_display"] == song_selection]["artists"].values[0]
+if selected_song != "Select a Song":
+    song_name = df_cleaned[df_cleaned["song_display"] == selected_song]["track_name"].values[0]
+    artist_name = df_cleaned[df_cleaned["song_display"] == selected_song]["artists"].values[0]
 
     if st.button("🔍 Get Recommendations"):
         with st.spinner("🔄 Fetching recommendations..."):
-            recommendations = content_based_recommend(selected_song)
+            recommendations = content_based_recommend(song_name)
 
             if recommendations is None or recommendations.empty:
-                st.error(f"'{selected_song}' not found in the dataset. Please enter a valid song.")
+                st.error(f"'{song_name}' not found in the dataset. Please enter a valid song.")
             else:
                 st.markdown('<div class="recommend-title">🎼 Recommended Songs</div>', unsafe_allow_html=True)
 
-                # Display recommendations
-                for i in range(10):
+                # First Row (5 songs)
+                st.markdown('<div class="song-row">', unsafe_allow_html=True)
+                cols1 = st.columns(5)
+                for i in range(5):
                     row = recommendations.iloc[i]
                     album_art_url = get_album_art(row['track_name'], row['artists'])
-                    st.markdown(f"""<div class="song-container">
-                        <img src="{album_art_url}" class="song-image">
-                        <div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>
-                    </div>""", unsafe_allow_html=True)
+                    with cols1[i]:
+                        st.image(album_art_url, width=150)
+                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+
+                # Second Row (5 songs)
+                st.markdown('<div class="song-row">', unsafe_allow_html=True)
+                cols2 = st.columns(5)
+                for i in range(5, 10):
+                    row = recommendations.iloc[i]
+                    album_art_url = get_album_art(row['track_name'], row['artists'])
+                    with cols2[i - 5]:
+                        st.image(album_art_url, width=150)
+                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
