@@ -104,18 +104,18 @@ st.markdown("""
     .song-card h4 { font-size: 16px; font-weight: bold; color: white; }
     .song-card p { font-size: 14px; color: #BBBBBB; }
 
+    
     /* Footer Styling */
     .footer {
         position: fixed;
         bottom: 0;
         width: 100%;
-        background-color: #000;
+        background: transparent;
         color: #1DB954;
         text-align: center;
         padding: 15px;
         font-size: 18px;
         font-weight: bold;
-        border-top: 3px solid #1DB954;
     }
 
     .footer a {
