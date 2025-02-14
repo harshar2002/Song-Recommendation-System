@@ -29,7 +29,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS for Centered Image & Proper Text Box Spacing
+# Custom CSS for Modern UI & Footer Animation
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -50,65 +50,36 @@ st.markdown("""
         text-align: center; 
     }
 
-    /* Song Container */
-    .song-container {
-        text-align: center;
-        width: 220px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Centered Image */
-    .song-container img {
-        width: 150px;
-        height: 150px;
-        border-radius: 10px;
-        margin-bottom: 10px; /* Adds space between image & text box */
-    }
-
-    /* Uniform Text Box */
-    .song-card {
-        background-color: #222;
-        padding: 10px;
-        border-radius: 12px;
-        border: 1px solid #444;
-        width: 220px;
-        height: 180px; /* Fixed height for uniform boxes */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .song-card:hover { 
-        transform: scale(1.05);
-        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.2);
-    }
-
-    .song-card h3 {
-        font-size: 18px;
-        font-weight: bold;
-        color: #1DB954;
-        margin-bottom: 5px;
-    }
-
-    .song-card h4 {
-        font-size: 16px;
-        font-weight: bold;
+    /* Footer Section */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #181818;
         color: white;
-        margin-bottom: 5px;
-    }
-
-    .song-card p {
+        text-align: center;
+        padding: 10px;
         font-size: 14px;
-        color: #BBBBBB;
-        margin-bottom: 5px;
+        border-top: 1px solid #444;
+        animation: fadeIn 2s ease-in-out;
+    }
+    
+    /* Footer Links */
+    .footer a {
+        color: #1DB954;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .footer a:hover {
+        text-decoration: underline;
     }
 
-    /* Add space between first 5 and last 5 songs */
-    .gap { margin-bottom: 40px; }
+    /* Fade-in Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -176,7 +147,6 @@ if song_selection != "Select a Song":
                     row = recommendations.iloc[i]
                     album_art_url = get_album_art(row['track_name'], row['artists'])
                     with cols1[i]:
-                        st.markdown(f'<div class="song-container">', unsafe_allow_html=True)
                         st.image(album_art_url, width=150)
                         st.markdown(f"""
                             <div class="song-card">
@@ -186,8 +156,8 @@ if song_selection != "Select a Song":
                                 <p><i>{row['track_genre']}</i></p>
                             </div>
                         """, unsafe_allow_html=True)
-                        st.markdown(f'</div>', unsafe_allow_html=True)
 
+                # ✅ Space between first 5 and last 5
                 st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
 
                 # ✅ Display last 5 recommendations
@@ -197,4 +167,20 @@ if song_selection != "Select a Song":
                     album_art_url = get_album_art(row['track_name'], row['artists'])
                     with cols2[i - 5]:
                         st.image(album_art_url, width=150)
-                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
+                        st.markdown(f"""
+                            <div class="song-card">
+                                <h3>{row['track_name']}</h3>
+                                <h4>{row['artists']}</h4>
+                                <p>{row['album_name']}</p>
+                                <p><i>{row['track_genre']}</i></p>
+                            </div>
+                        """, unsafe_allow_html=True)
+
+# Footer UI
+st.markdown("""
+    <div class="footer">
+        🎵 Made with ❤️ by <a href="https://github.com/yourgithub" target="_blank">Your Name</a> | 
+        Follow us on <a href="https://twitter.com/yourprofile" target="_blank">Twitter</a> |
+        Contact: <a href="mailto:your-email@example.com">your-email@example.com</a>
+    </div>
+""", unsafe_allow_html=True)
