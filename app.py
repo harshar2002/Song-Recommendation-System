@@ -28,7 +28,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS
+# Custom CSS (Better Spacing & Layout)
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -39,9 +39,9 @@ st.markdown("""
     .recommend-title { font-size: 24px; font-weight: bold; color: #1DB954; margin-bottom: 15px; text-align: center; }
     .song-card { background-color: #222; padding: 15px; border-radius: 12px; border: 1px solid #444; text-align: center; width: 240px; height: 260px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .song-card:hover { transform: scale(1.05); box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.2); }
-    .footer { text-align: center; padding: 15px; margin-top: 40px; background: linear-gradient(to right, #1DB954, #191414); color: white; font-size: 16px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); }
-    .footer a { color: #1DB954; font-weight: bold; text-decoration: none; transition: color 0.3s ease; }
-    .footer a:hover { color: #ffffff; text-decoration: underline; }
+    .footer { text-align: center; padding: 20px; margin-top: 40px; background: linear-gradient(to right, #1DB954, #191414); color: white; font-size: 18px; font-weight: bold; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); }
+    .footer a { color: #ffffff; font-weight: bold; text-decoration: none; transition: color 0.3s ease; }
+    .footer a:hover { color: #1DB954; text-decoration: underline; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -52,6 +52,7 @@ def compute_cosine_similarity(index, df_scaled):
         return np.zeros(len(df_scaled))
     return cosine_similarity(df_scaled[index].reshape(1, -1), df_scaled).flatten()
 
+# Recommendation Function (Returns 10 Recommendations)
 def content_based_recommend(song_name, top_n=10):
     if song_name not in df_cleaned['track_name'].values:
         return None
@@ -60,6 +61,7 @@ def content_based_recommend(song_name, top_n=10):
     similar_song_indices = similarity_scores.argsort()[::-1][1:top_n+1]
     return df_cleaned.iloc[similar_song_indices][['track_name', 'artists', 'album_name', 'track_genre']]
 
+# Function to fetch album artwork from Last.fm API
 @st.cache_data
 def get_album_art(song_name, artist_name):
     url = f"http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={LASTFM_API_KEY}&artist={artist_name}&track={song_name}&format=json"
@@ -73,33 +75,9 @@ def get_album_art(song_name, artist_name):
                 return album_image
     except (requests.exceptions.RequestException, KeyError):
         pass
-    return LOCAL_IMAGE_PATH
+    return LOCAL_IMAGE_PATH  # ✅ Fallback to local image
 
-# UI Components
-st.markdown('<div class="title-container"><h1>🎵 Music Recommender System</h1><p>Find songs similar to your favorites</p></div>', unsafe_allow_html=True)
-
-song_options = ["Select a Song"] + df_cleaned["song_display"].unique().tolist()
-selected_song = st.selectbox("", options=song_options, index=0, format_func=lambda x: "🔍 " + x if x != "Select a Song" else "🎶 Select a Song", key="song_selection")
-
-if selected_song != "Select a Song":
-    song_name = df_cleaned[df_cleaned["song_display"] == selected_song]["track_name"].values[0]
-    artist_name = df_cleaned[df_cleaned["song_display"] == selected_song]["artists"].values[0]
-
-    if st.button("🔍 Get Recommendations"):
-        with st.spinner("🔄 Fetching recommendations..."):
-            recommendations = content_based_recommend(song_name)
-            if recommendations is None or recommendations.empty:
-                st.error(f"'{song_name}' not found in the dataset. Please enter a valid song.")
-            else:
-                st.markdown('<div class="recommend-title">🎼 Recommended Songs</div>', unsafe_allow_html=True)
-                cols = st.columns(5)
-                for i in range(min(10, len(recommendations))):
-                    row = recommendations.iloc[i]
-                    album_art_url = get_album_art(row['track_name'], row['artists'])
-                    with cols[i % 5]:
-                        st.image(album_art_url, width=150)
-                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
-
+# Footer UI
 st.markdown("""
     <div class="footer">
         🎵 Made with ❤️ by <a href="https://github.com/harshar2002" target="_blank">Harsha</a> | 
