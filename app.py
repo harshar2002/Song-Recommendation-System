@@ -109,18 +109,21 @@ st.markdown("""
         position: fixed;
         bottom: 0;
         width: 100%;
-        background-color: #1DB954;
-        color: white;
+        background-color: #000;
+        color: #1DB954;
         text-align: center;
-        padding: 10px;
-        font-size: 16px;
+        padding: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        border-top: 3px solid #1DB954;
     }
 
     .footer a {
-        color: white;
-        text-decoration: none;
+        color: #1DB954;
+        text-decoration: underline;
         font-weight: bold;
     }
+            
     </style>
 """, unsafe_allow_html=True)
 
