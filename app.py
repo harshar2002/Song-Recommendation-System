@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import requests
-import concurrent.futures
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Set page title and layout
@@ -29,7 +28,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS (Fixing Text Overflow & Layout)
+# Custom CSS (Fix Overflow, Increase Text Box Size, and Make It Responsive)
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -53,18 +52,18 @@ st.markdown("""
     /* Fixed Text Box Size */
     .song-card {
         background-color: #222;
-        padding: 12px;
+        padding: 15px;
         border-radius: 12px;
         border: 1px solid #444;
         text-align: center;
-        width: 220px;
-        height: 230px;  /* Increased height to prevent text overflow */
+        width: 250px;  /* Increased width */
+        height: 270px;  /* Increased height */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        word-wrap: break-word; /* Ensures long text wraps inside box */
+        word-wrap: break-word;
         overflow: hidden;
     }
 
@@ -73,25 +72,18 @@ st.markdown("""
         box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.2);
     }
 
-    .song-card h3 {
-        font-size: 17px;
-        font-weight: bold;
-        color: #1DB954;
-        margin-bottom: 5px;
+    .song-card h3, .song-card h4, .song-card p {
+        text-align: center;
+        margin: 5px 0;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;  /* Ensures text does not overflow */
     }
 
-    .song-card h4 {
-        font-size: 15px;
-        font-weight: bold;
-        color: white;
-        margin-bottom: 5px;
-    }
-
-    .song-card p {
-        font-size: 13px;
-        color: #BBBBBB;
-        margin-bottom: 5px;
-    }
+    .song-card h3 { font-size: 18px; font-weight: bold; color: #1DB954; }
+    .song-card h4 { font-size: 16px; font-weight: bold; color: white; }
+    .song-card p { font-size: 14px; color: #BBBBBB; }
 
     /* Footer */
     .footer {
@@ -193,11 +185,3 @@ if song_selection != "Select a Song":
 
                 st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
 
-                # Last 5 recommendations
-                cols2 = st.columns(5)
-                for i in range(5, 10):
-                    row = recommendations.iloc[i]
-                    album_art_url = get_album_art(row['track_name'], row['artists'])
-                    with cols2[i - 5]:
-                        st.image(album_art_url, width=150)
-                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
