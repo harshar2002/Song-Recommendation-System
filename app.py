@@ -29,7 +29,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS (Restored Previous Text Box + Footer)
+# Custom CSS (Fixing Text Overflow & Layout)
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -50,20 +50,22 @@ st.markdown("""
         text-align: center; 
     }
 
-    /* Previous Text Box Styling */
+    /* Fixed Text Box Size */
     .song-card {
         background-color: #222;
-        padding: 10px;
+        padding: 12px;
         border-radius: 12px;
         border: 1px solid #444;
         text-align: center;
         width: 220px;
-        height: 200px;
+        height: 230px;  /* Increased height to prevent text overflow */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        word-wrap: break-word; /* Ensures long text wraps inside box */
+        overflow: hidden;
     }
 
     .song-card:hover { 
@@ -72,21 +74,21 @@ st.markdown("""
     }
 
     .song-card h3 {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: bold;
         color: #1DB954;
         margin-bottom: 5px;
     }
 
     .song-card h4 {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: bold;
         color: white;
         margin-bottom: 5px;
     }
 
     .song-card p {
-        font-size: 14px;
+        font-size: 13px;
         color: #BBBBBB;
         margin-bottom: 5px;
     }
@@ -189,6 +191,13 @@ if song_selection != "Select a Song":
                         st.image(album_art_url, width=150)
                         st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
 
-                # Space between recommendations
                 st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
 
+                # Last 5 recommendations
+                cols2 = st.columns(5)
+                for i in range(5, 10):
+                    row = recommendations.iloc[i]
+                    album_art_url = get_album_art(row['track_name'], row['artists'])
+                    with cols2[i - 5]:
+                        st.image(album_art_url, width=150)
+                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
