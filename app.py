@@ -28,7 +28,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS (Fix Image Centering & Alignment)
+# Custom CSS (Fix Overlapping & Two Row Layout)
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -55,22 +55,6 @@ st.markdown("""
         justify-content: center;
         gap: 20px;
         margin-bottom: 40px; /* Space between first and second row */
-    }
-
-    /* Container for Image + Text Box */
-    .song-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;  /* Centers image and text */
-        justify-content: center;
-    }
-
-    /* Image Styling */
-    .song-image {
-        width: 150px;
-        height: 150px;
-        border-radius: 10px;
-        margin-bottom: 10px; /* Space between image and text box */
     }
 
     /* Fixed Text Box Size & Prevent Overflow */
@@ -199,11 +183,24 @@ if song_selection != "Select a Song":
             else:
                 st.markdown('<div class="recommend-title">🎼 Recommended Songs</div>', unsafe_allow_html=True)
 
-                # Display recommendations with centered images
-                for i in range(10):
+                # First Row (5 songs)
+                st.markdown('<div class="song-row">', unsafe_allow_html=True)
+                cols1 = st.columns(5)
+                for i in range(5):
                     row = recommendations.iloc[i]
                     album_art_url = get_album_art(row['track_name'], row['artists'])
-                    st.markdown(f"""<div class="song-container">
-                        <img src="{album_art_url}" class="song-image">
-                        <div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>
-                    </div>""", unsafe_allow_html=True)
+                    with cols1[i]:
+                        st.image(album_art_url, width=150)
+                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+
+                # Second Row (5 songs)
+                st.markdown('<div class="song-row">', unsafe_allow_html=True)
+                cols2 = st.columns(5)
+                for i in range(5, 10):
+                    row = recommendations.iloc[i]
+                    album_art_url = get_album_art(row['track_name'], row['artists'])
+                    with cols2[i - 5]:
+                        st.image(album_art_url, width=150)
+                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
