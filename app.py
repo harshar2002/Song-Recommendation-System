@@ -52,6 +52,31 @@ def compute_cosine_similarity(index, df_scaled):
         return np.zeros(len(df_scaled))
     return cosine_similarity(df_scaled[index].reshape(1, -1), df_scaled).flatten()
 
+# Recommendation Function (Returns 10 Recommendations)
+def content_based_recommend(song_name, top_n=10):
+    if song_name not in df_cleaned['track_name'].values:
+        return None
+    index = df_cleaned[df_cleaned["track_name"] == song_name].index[0]
+    similarity_scores = compute_cosine_similarity(index, df_scaled)
+    similar_song_indices = similarity_scores.argsort()[::-1][1:top_n+1]
+    return df_cleaned.iloc[similar_song_indices][['track_name', 'artists', 'album_name', 'track_genre']]
+
+# Function to fetch album artwork from Last.fm API
+@st.cache_data
+def get_album_art(song_name, artist_name):
+    url = f"http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={LASTFM_API_KEY}&artist={artist_name}&track={song_name}&format=json"
+    try:
+        response = requests.get(url, timeout=2)
+        response.raise_for_status()
+        data = response.json()
+        if "track" in data and "album" in data["track"] and "image" in data["track"]["album"]:
+            album_image = data["track"]["album"]["image"][-1]["#text"]
+            if album_image:  
+                return album_image
+    except (requests.exceptions.RequestException, KeyError):
+        pass
+    return LOCAL_IMAGE_PATH  # ✅ Fallback to local image
+
 # Restore full UI elements
 st.markdown('<div class="title-container"><h1>🎵 Music Recommender System</h1><p>Find songs similar to your favorites</p></div>', unsafe_allow_html=True)
 
@@ -67,15 +92,6 @@ if selected_song != "Select a Song":
             recommendations = content_based_recommend(song_name)
             if recommendations is None or recommendations.empty:
                 st.error(f"'{song_name}' not found in the dataset. Please enter a valid song.")
-            else:
-                st.markdown('<div class="recommend-title">🎼 Recommended Songs</div>', unsafe_allow_html=True)
-                cols = st.columns(5)
-                for i in range(min(10, len(recommendations))):
-                    row = recommendations.iloc[i]
-                    album_art_url = get_album_art(row['track_name'], row['artists'])
-                    with cols[i % 5]:
-                        st.image(album_art_url, width=150)
-                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
 
 # Footer UI
 st.markdown("""
