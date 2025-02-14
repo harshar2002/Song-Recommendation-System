@@ -28,7 +28,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS (Fix Overflow, Increase Text Box Size, and Make It Responsive)
+# Custom CSS (Fix Overflow, Proper Spacing & Alignment)
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -49,7 +49,7 @@ st.markdown("""
         text-align: center; 
     }
 
-    /* Fixed Text Box Size */
+    /* Fixed Text Box Size & Prevent Overflow */
     .song-card {
         background-color: #222;
         padding: 15px;
@@ -57,14 +57,14 @@ st.markdown("""
         border: 1px solid #444;
         text-align: center;
         width: 250px;  /* Increased width */
-        height: 270px;  /* Increased height */
+        height: 280px;  /* Increased height */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        word-wrap: break-word;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .song-card:hover { 
@@ -72,18 +72,22 @@ st.markdown("""
         box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.2);
     }
 
+    /* Ensure Text Wraps Inside Box */
     .song-card h3, .song-card h4, .song-card p {
         text-align: center;
         margin: 5px 0;
-        white-space: nowrap; 
+        white-space: normal; /* Allow text to wrap */
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 100%;  /* Ensures text does not overflow */
+        width: 100%;
     }
 
     .song-card h3 { font-size: 18px; font-weight: bold; color: #1DB954; }
     .song-card h4 { font-size: 16px; font-weight: bold; color: white; }
     .song-card p { font-size: 14px; color: #BBBBBB; }
+
+    /* Spacing between rows */
+    .song-row { margin-bottom: 40px; } /* Adds spacing between the first and second row */
 
     /* Footer */
     .footer {
@@ -174,14 +178,13 @@ if song_selection != "Select a Song":
             else:
                 st.markdown('<div class="recommend-title">🎼 Recommended Songs</div>', unsafe_allow_html=True)
 
-                # First 5 recommendations
-                cols1 = st.columns(5)
-                for i in range(5):
+                # First 10 recommendations
+                cols1 = st.columns(10)
+                for i in range(10):
                     row = recommendations.iloc[i]
                     album_art_url = get_album_art(row['track_name'], row['artists'])
                     with cols1[i]:
                         st.image(album_art_url, width=150)
                         st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
 
-                st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
-
+                st.markdown('<div class="song-row"></div>', unsafe_allow_html=True)  # Adds space between rows
