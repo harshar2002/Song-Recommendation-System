@@ -105,9 +105,10 @@ st.markdown("""
     .song-card p { font-size: 14px; color: #BBBBBB; }
 
     
+  
     /* Footer Styling */
     .footer {
-        position: fixed;
+        position: absolute;
         bottom: 0;
         width: 100%;
         background: transparent;
@@ -123,7 +124,7 @@ st.markdown("""
         text-decoration: underline;
         font-weight: bold;
     }
-            
+
     </style>
 """, unsafe_allow_html=True)
 
