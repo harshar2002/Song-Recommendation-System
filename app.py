@@ -28,7 +28,7 @@ LASTFM_API_KEY = "fa10f0c463273e74e58eebf856d5df9d"
 # Define the local fallback image
 LOCAL_IMAGE_PATH = "images.jpg"
 
-# Custom CSS (Fix Overflow, Proper Spacing & Alignment)
+# Custom CSS (Fix Overlapping & Two Row Layout)
 st.markdown("""
     <style>
     .stApp { background-color: #121212; color: white; font-family: 'Arial', sans-serif; }
@@ -49,6 +49,14 @@ st.markdown("""
         text-align: center; 
     }
 
+    /* Two Row Layout */
+    .song-row {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px; /* Space between first and second row */
+    }
+
     /* Fixed Text Box Size & Prevent Overflow */
     .song-card {
         background-color: #222;
@@ -56,8 +64,8 @@ st.markdown("""
         border-radius: 12px;
         border: 1px solid #444;
         text-align: center;
-        width: 250px;  /* Increased width */
-        height: 280px;  /* Increased height */
+        width: 240px;  /* Adjusted width */
+        height: 260px;  /* Adjusted height */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -85,9 +93,6 @@ st.markdown("""
     .song-card h3 { font-size: 18px; font-weight: bold; color: #1DB954; }
     .song-card h4 { font-size: 16px; font-weight: bold; color: white; }
     .song-card p { font-size: 14px; color: #BBBBBB; }
-
-    /* Spacing between rows */
-    .song-row { margin-bottom: 40px; } /* Adds spacing between the first and second row */
 
     /* Footer */
     .footer {
@@ -178,13 +183,24 @@ if song_selection != "Select a Song":
             else:
                 st.markdown('<div class="recommend-title">🎼 Recommended Songs</div>', unsafe_allow_html=True)
 
-                # First 10 recommendations
-                cols1 = st.columns(10)
-                for i in range(10):
+                # First Row (5 songs)
+                st.markdown('<div class="song-row">', unsafe_allow_html=True)
+                cols1 = st.columns(5)
+                for i in range(5):
                     row = recommendations.iloc[i]
                     album_art_url = get_album_art(row['track_name'], row['artists'])
                     with cols1[i]:
                         st.image(album_art_url, width=150)
                         st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
-                st.markdown('<div class="song-row"></div>', unsafe_allow_html=True)  # Adds space between rows
+                # Second Row (5 songs)
+                st.markdown('<div class="song-row">', unsafe_allow_html=True)
+                cols2 = st.columns(5)
+                for i in range(5, 10):
+                    row = recommendations.iloc[i]
+                    album_art_url = get_album_art(row['track_name'], row['artists'])
+                    with cols2[i - 5]:
+                        st.image(album_art_url, width=150)
+                        st.markdown(f"""<div class="song-card"><h3>{row['track_name']}</h3><h4>{row['artists']}</h4><p>{row['album_name']}</p><p><i>{row['track_genre']}</i></p></div>""", unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
