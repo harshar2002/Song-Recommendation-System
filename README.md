@@ -126,7 +126,7 @@ This project is **MIT Licensed**.
 
 ## 📩 Contact
 
-- **👤 Author**: Harsha  
+- **👤 Author**: Harsha R
 - 📧 **Email**: [harshagowda497@gmail.com](mailto:harshagowda497@gmail.com)  
 - 🌐 **GitHub**: [harshar2002](https://github.com/harshar2002)  
 
