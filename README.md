@@ -34,34 +34,16 @@ This **Music Recommender System** is built using **Streamlit, Pandas, NumPy, and
 ├── df_scaled.npy                 # Scaled NumPy array for faster processing
 ├── Song_Recommendation_System.ipynb  # Jupyter Notebook with model implementation
 ├── requirements.txt              # Required dependencies
-├── images/
-│   ├── ui_home.png               # UI Screenshot - Home Page
-│   ├── ui_recommendations.png    # UI Screenshot - Recommendations
 └── README.md                     # Project documentation
 ```
 
 ---
 
-## 🔹 **UI Overview**
+## 🔹 **Deployed Application**
 
-### 📌 **Home Page**
-When you launch the app, the **main interface** looks like this:
+You can try the deployed application here:
 
-![Home UI](images/ui_home.png)
-
-- The user can **select a song** from the dropdown list.
-- Click on **"🔍 Get Recommendations"** to see similar songs.
-
----
-
-### 📌 **Recommendation Results**
-Once a song is selected, the system recommends similar tracks:
-
-![Recommendations UI](images/ui_recommendations.png)
-
-- The app displays **recommended songs** along with **album art**.
-- If album art is missing, a **default placeholder** is shown.
-- Users can explore different tracks and find new music easily.
+🔗 **[StreamVibe - Music Recommender System](https://streamvibe.streamlit.app/)**
 
 ---
 
